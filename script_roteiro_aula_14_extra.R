@@ -105,6 +105,100 @@ dados_aula14$PAM[dados_aula14$TIPO_VEICULO == "Carro" &
 # TAIC: total de compradores com perfil AIC
 # TGIC: total de compradores com perfil GIC
 
+# Função para calcular as estatísticas
+calcular = function(dados) {
+  
+  mulher_carro = dados$IDADE_PROPRIETARIO[
+    dados$SEXO_PROPRIETARIO == "Feminino" &
+      dados$TIPO_VEICULO == "Carro"
+  ]
+  
+  homem_moto = dados$IDADE_PROPRIETARIO[
+    dados$SEXO_PROPRIETARIO == "Masculino" &
+      dados$TIPO_VEICULO == "Moto"
+  ]
+  
+  data.frame(
+    TVV = nrow(dados),
+    TVRC = sum(complete.cases(dados[, 1:5])),
+    
+    TVVF = sum(dados$SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    TVVM = sum(dados$SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    
+    TVCF = sum(dados$TIPO_VEICULO == "Carro" &
+                 dados$SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    
+    TVCM = sum(dados$TIPO_VEICULO == "Carro" &
+                 dados$SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    
+    TVMF = sum(dados$TIPO_VEICULO == "Moto" &
+                 dados$SEXO_PROPRIETARIO == "Feminino", na.rm = TRUE),
+    
+    TVMM = sum(dados$TIPO_VEICULO == "Moto" &
+                 dados$SEXO_PROPRIETARIO == "Masculino", na.rm = TRUE),
+    
+    TVC_22_34 = sum(dados$TIPO_VEICULO == "Carro" &
+                      dados$F_IDADE == "22 a 34", na.rm = TRUE),
+    
+    TVC_35_45 = sum(dados$TIPO_VEICULO == "Carro" &
+                      dados$F_IDADE == "35 a 45", na.rm = TRUE),
+    
+    IMVCF = mean(mulher_carro, na.rm = TRUE),
+    DPVCF = sd(mulher_carro, na.rm = TRUE),
+    IVCF_P25 = quantile(mulher_carro, .25, na.rm = TRUE),
+    IVCF_P50 = quantile(mulher_carro, .50, na.rm = TRUE),
+    IVCF_P75 = quantile(mulher_carro, .75, na.rm = TRUE),
+    
+    IMVMM = mean(homem_moto, na.rm = TRUE),
+    DPVMM = sd(homem_moto, na.rm = TRUE),
+    IVMM_P25 = quantile(homem_moto, .25, na.rm = TRUE),
+    IVMM_P50 = quantile(homem_moto, .50, na.rm = TRUE),
+    IVMM_P75 = quantile(homem_moto, .75, na.rm = TRUE),
+    
+    TPIC = sum(dados$PAM == "PIC", na.rm = TRUE),
+    TAIC = sum(dados$PAM == "AIC", na.rm = TRUE),
+    TGIC = sum(dados$PAM == "GIC", na.rm = TRUE)
+  )
+}
+
+
+# RJ
+RJ = calcular(dados_aula14)
+RJ$ANO = 2025
+RJ$NIVEL = "UF"
+RJ$CODIGO = 33
+
+
+# Municípios
+municipios = split(dados_aula14, dados_aula14$MUNICIPIO)
+
+BANCO_AULA14_RJ = do.call(rbind, lapply(municipios, function(dados) {
+  
+  resultado = calcular(dados)
+  
+  resultado$ANO = 2025
+  resultado$NIVEL = "MUNICIPIO"
+  resultado$CODIGO = dados$MUNICIPIO[1]
+  
+  resultado
+}))
+
+
+# Colocar RJ na primeira linha
+BANCO_AULA14_RJ = rbind(RJ, BANCO_AULA14_RJ)
+
+
+# Organizar as colunas
+BANCO_AULA14_RJ = BANCO_AULA14_RJ[, c(
+  "ANO", "NIVEL", "CODIGO",
+  "TVV", "TVRC", "TVVF", "TVVM",
+  "TVCF", "TVCM", "TVMF", "TVMM",
+  "TVC_22_34", "TVC_35_45",
+  "IMVCF", "DPVCF", "IVCF_P25", "IVCF_P50", "IVCF_P75",
+  "IMVMM", "DPVMM", "IVMM_P25", "IVMM_P50", "IVMM_P75",
+  "TPIC", "TAIC", "TGIC"
+)]
+
 # Ao terminar a Tarefa 4 commit com a mensagem " script - tarefa 1 a 4" e envie para o repositório Aula_14_Extra
 
 
