@@ -4,7 +4,7 @@
 # Tarefa 1: Leitura do banco de dados banco 2 = SINASC.csv com o nome de dados_aula14
 # Ler o arquivo, verificar estrutura dos dados e dar uma olhada nos dados
 # Ler o banco de dados
-dados_aula14 <- read.csv("banco 2 SINASC.csv", header = TRUE, sep = ";")
+dados_aula14 = read.csv("banco 2 SINASC.csv", header = TRUE, sep = ";")
 
 # Verificar a estrutura dos dados
 str(dados_aula14)
@@ -19,6 +19,27 @@ summary(dados_aula14)
 # Padronizar as categorias SEXO_PROPRIETARIO para Masculino e Feminino
 # Atribuir legendas para a variável TIPO_VEICULO, sendo 1: Carro e 2: Moto
 # Criar uma nova variável em dados_aula14 F_IDADE categorizando as idades em: 22 a 34, 35 a 45
+
+# Padronizar sexo
+dados_aula14$SEXO_PROPRIETARIO = ifelse(
+  tolower(dados_aula14$SEXO_PROPRIETARIO) == "masculino",
+  "Masculino",
+  "Feminino"
+  )
+
+# Tipo de veículo
+dados_aula14$TIPO_VEICULO = factor(
+  dados_aula14$TIPO_VEICULO,
+  levels = c(1, 2),
+  labels = c("Carro", "Moto")
+)
+
+#Faixa de idade 
+dados_aula14$F_IDADE = cut(
+  dados_aula14$IDADE_PROPRIETARIO,
+  breaks = c(21, 34, 45),
+  labels = c("22 a 34", "35 a 45")
+)
 
 # Ao terminar a Tarefa 2 commit com a mensagem " script - tarefa 1 a 2" e envie para o repositório Aula_14_Extra
 
